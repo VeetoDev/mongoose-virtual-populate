@@ -1,8 +1,8 @@
 {
-  "name": "mongoose-two-way-binding",
-  "version": "1.0.1",
+  "name": "mongoose-virtual-populate",
+  "version": "1.0.2",
   "description": "A Mongoose plugin that will enable binding and auto-syncing between an array of objects and each of those objects. i.e. If you have schema a with a field that is an array of schema b, you can add a new model of type b with an id reference to a and it will auto-sync the array for model a",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,5 +21,8 @@
     "populate"
   ],
   "author": "Matt Feld",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "mongoose": "^4.11.12"
+  }
 }
