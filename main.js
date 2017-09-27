@@ -9,17 +9,15 @@ module.exports = function (schema, options) {
     if (!options) {
         options = {};
     }
-    if (!global.globalBindingFields) {
-        global.globalBindingFields = {};
+    if(!schema.options.autoPopulateFields){
+        schema.options.autoPopulateFields = [];
     }
-    options.virtualPaths = [];
     for (var i = 0, pathKeys = Object.keys(paths); i < pathKeys.length; i++) {
         var field = pathKeys[i];
         var obj = paths[field];
         if (!!obj && obj.$isMongooseArray && obj.caster.options.linked === true) {
 
             var objOptions = obj.caster.options;
-            options.virtualPaths.push(field);
             var localField = objOptions.localField || '_id';
             var virtualRef = objOptions.ref;
             var foreignField = objOptions.field || (virtualRef.charAt(0).toUpperCase() + virtualRef.slice(1));
@@ -29,10 +27,15 @@ module.exports = function (schema, options) {
                 localField: localField,
                 foreignField: foreignField
             });
-            globalBindingFields.field = field;
+            schema.options.autoPopulateFields.push(field);
             var autoPopulateLink = function (next) {
-                this.populate(globalBindingFields.field);
-
+                if(!this.schema.options.autoPopulateFields){
+                    next();
+                    return;
+                }
+                for(var i = 0; i < this.schema.options.autoPopulateFields.length; i++){
+                    this.populate(this.schema.options.autoPopulateFields[i]);
+                }
                 next();
             };
             schema
