@@ -6,8 +6,11 @@ var mongoose = require('mongoose');
 //needs error handling
 module.exports = function (schema, options) {
     var paths = schema.paths;
-    if(!options){
+    if (!options) {
         options = {};
+    }
+    if (!global.globalBindingFields) {
+        global.globalBindingFields = {};
     }
     options.virtualPaths = [];
     for (var i = 0, pathKeys = Object.keys(paths); i < pathKeys.length; i++) {
@@ -26,13 +29,14 @@ module.exports = function (schema, options) {
                 localField: localField,
                 foreignField: foreignField
             });
-            var autoPopulateLink = function(next) {
-                    this.populate('votes');
+            globalBindingFields.field = field;
+            var autoPopulateLink = function (next) {
+                this.populate(globalBindingFields.field);
 
                 next();
             };
             schema
-                .pre('findOne', function(next){autoPopulateLink(next, field)})
+                .pre('findOne', autoPopulateLink)
                 .pre('find', autoPopulateLink)
                 .pre('findById', autoPopulateLink);
         }
